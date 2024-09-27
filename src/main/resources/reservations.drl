@@ -1,0 +1,29 @@
+import com.spring.drools.drools_demo.dto.ReservationDTO;
+import java.util.*
+import java.math.BigDecimal;
+import com.spring.drools.drools_demo.dto.OutputCollectorDTO
+import com.spring.drools.drools_demo.dto.RuleOutputDTO;
+dialect  "mvel"
+
+global OutputCollectorDTO outputCollector;
+
+rule "Peakseason Rule"
+    when
+        $reservation : ReservationDTO(peakSeason)
+    then
+       	$reservation.setTotalPriceMultiplier(BigDecimal.valueOf(1.1));
+       	outputCollector.addRuleOutput(RuleOutputDTO.builder().ruleName(drools.getRule().getName()).result("blah").build());
+//       	modify($reservation){
+//       	  setPeakSeason(false)
+//       	}
+end
+rule "Not Peakseason Rule"
+    when
+        $reservation : ReservationDTO(!peakSeason)
+    then
+       	$reservation.setTotalPriceMultiplier(BigDecimal.valueOf(0.9));
+       	outputCollector.addRuleOutput(RuleOutputDTO.builder().ruleName(drools.getRule().getName()).result("blah").build());
+       	modify($reservation){
+       	  setPeakSeason(true)
+       	}
+end
